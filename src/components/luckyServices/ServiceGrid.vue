@@ -32,12 +32,14 @@ function matchSearch(service: LuckyService, keyword: string): boolean {
   )
 }
 
-// 筛选后的服务列表（用于单个分组模式）
+// 筛选后的服务列表（用于多选分组模式）
 const filteredServices = computed(() => {
   let services = navStore.allLuckyServices
   
-  if (configStore.currentGroup !== 'all') {
-    services = services.filter((s: LuckyService) => s.groupKey === configStore.currentGroup)
+  // 按分组筛选（支持多选）
+  const selectedGroups = configStore.currentGroupArray
+  if (selectedGroups.length > 0) {
+    services = services.filter((s: LuckyService) => s.groupKey && selectedGroups.includes(s.groupKey))
   }
   
   // 按搜索关键字筛选
@@ -49,13 +51,19 @@ const filteredServices = computed(() => {
   return services
 })
 
-// 按分组组织的服务（用于全部模式）
+// 按分组组织的服务（用于全部模式或多选分组模式）
 const groupedServices = computed(() => {
   const result: { group: Group; services: LuckyService[] }[] = []
   const allServices = navStore.allLuckyServices
   const kw = searchKeyword.value
+  const selectedGroups = configStore.currentGroupArray
   
-  for (const group of navStore.luckyServicesGroups) {
+  // 确定要显示的分组
+  const groupsToShow = selectedGroups.length > 0
+    ? navStore.luckyServicesGroups.filter((g: Group) => selectedGroups.includes(g.key))
+    : navStore.luckyServicesGroups
+  
+  for (const group of groupsToShow) {
     let services = allServices.filter((s: LuckyService) => s.groupKey === group.key)
     // 按搜索关键字筛选
     if (kw) {
@@ -234,13 +242,14 @@ function getGroupIconClass(icon?: string): string {
           :current="configStore.currentGroup"
           color="green"
           @change="configStore.setCurrentGroup"
+          @toggle="configStore.toggleGroup"
         />
         <ServiceLayoutSwitcher />
       </div>
     </div>
 
-    <!-- 全部模式：按分组显示 -->
-    <template v-if="configStore.currentGroup === 'all'">
+    <!-- 全部模式或多选分组模式：按分组显示 -->
+    <template v-if="configStore.isAllSelected || configStore.currentGroupArray.length > 1">
       <div 
         v-for="(item, index) in groupedServices" 
         :key="item.group.key" 
@@ -274,7 +283,7 @@ function getGroupIconClass(icon?: string): string {
       </div>
     </template>
 
-    <!-- 单个分组模式 -->
+    <!-- 单个分组模式（只选了一个分组） -->
     <template v-else>
       <!-- Lucky 服务网格 -->
       <div :class="gridClass">

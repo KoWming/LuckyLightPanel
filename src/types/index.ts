@@ -177,11 +177,14 @@ export type LayoutMode = 'compact' | 'normal' | 'large' | 'list' | 'minimal'
 /** 标签页 */
 export type TabType = 'sites' | 'docker' | 'luckyServices'
 
+/** 分组选择值类型：支持单选(string)或多选(string[]) */
+export type GroupSelection = string | string[]
+
 /** 各标签页的分组状态 */
 export interface TabGroups {
-  sites: string
-  docker: string
-  luckyServices: string
+  sites: GroupSelection
+  docker: GroupSelection
+  luckyServices: GroupSelection
 }
 
 /** 各标签页的搜索关键字 */

@@ -8,7 +8,8 @@ import type {
   UserConfig,
   PresetBackground,
   TabGroups,
-  TabSearchKeywords
+  TabSearchKeywords,
+  GroupSelection
 } from '@/types'
 
 const STORAGE_KEY = 'lightpanel_config'
@@ -125,9 +126,25 @@ export const useConfigStore = defineStore('config', () => {
   const luckyServicesLayout = computed(() => config.value.luckyServicesLayout)
   const networkMode = computed(() => config.value.networkMode)
   const currentTab = computed(() => config.value.currentTab)
-  const currentGroup = computed(() => {
+  
+  // 当前分组选择（支持多选）
+  const currentGroup = computed<GroupSelection>(() => {
     const tab = config.value.currentTab
     return config.value.tabGroups[tab] || 'all'
+  })
+  
+  // 当前分组选择的规范化数组形式
+  const currentGroupArray = computed<string[]>(() => {
+    const group = currentGroup.value
+    if (group === 'all') return []
+    if (Array.isArray(group)) return group
+    return [group]
+  })
+  
+  // 是否选中“全部”
+  const isAllSelected = computed(() => {
+    const group = currentGroup.value
+    return group === 'all' || (Array.isArray(group) && group.length === 0)
   })
   const showDescription = computed(() => config.value.showDescription)
   const showTime = computed(() => config.value.showTime)
@@ -245,11 +262,64 @@ export const useConfigStore = defineStore('config', () => {
     updateConfig('currentTab', tab)
   }
 
-  // 设置当前分组（根据当前标签页）
-  function setCurrentGroup(group: string) {
+  // 设置当前分组（根据当前标签页）- 支持多选
+  function setCurrentGroup(group: GroupSelection) {
     const tab = config.value.currentTab
     const newTabGroups = { ...config.value.tabGroups, [tab]: group }
     updateConfig('tabGroups', newTabGroups)
+  }
+  
+  // 切换分组选中状态（多选模式）
+  function toggleGroup(groupKey: string) {
+    const tab = config.value.currentTab
+    const current = config.value.tabGroups[tab]
+    
+    // 如果点击“全部”，直接设置为 'all'
+    if (groupKey === 'all') {
+      setCurrentGroup('all')
+      return
+    }
+    
+    // 当前是 'all'，切换到单选该分组
+    if (current === 'all') {
+      setCurrentGroup([groupKey])
+      return
+    }
+    
+    // 当前是数组
+    if (Array.isArray(current)) {
+      const index = current.indexOf(groupKey)
+      if (index >= 0) {
+        // 已选中，取消选中
+        const newSelection = current.filter(k => k !== groupKey)
+        // 如果没有选中项了，回到 'all'
+        setCurrentGroup(newSelection.length > 0 ? newSelection : 'all')
+      } else {
+        // 未选中，添加选中
+        setCurrentGroup([...current, groupKey])
+      }
+      return
+    }
+    
+    // 当前是单个字符串（旧格式单选）
+    if (current === groupKey) {
+      // 点击已选中的，取消选中回到 'all'
+      setCurrentGroup('all')
+    } else {
+      // 点击未选中的，添加到选中列表
+      setCurrentGroup([current, groupKey])
+    }
+  }
+  
+  // 检查分组是否被选中
+  function isGroupSelected(groupKey: string): boolean {
+    const group = currentGroup.value
+    if (groupKey === 'all') {
+      return group === 'all' || (Array.isArray(group) && group.length === 0)
+    }
+    if (group === 'all') return false
+    if (Array.isArray(group)) return group.includes(groupKey)
+    return group === groupKey
   }
 
   // 重置当前标签页的分组到全部
@@ -311,6 +381,8 @@ export const useConfigStore = defineStore('config', () => {
     networkMode,
     currentTab,
     currentGroup,
+    currentGroupArray,
+    isAllSelected,
     showDescription,
     showTime,
     showWelcome,
@@ -328,6 +400,8 @@ export const useConfigStore = defineStore('config', () => {
     setNetworkMode,
     setCurrentTab,
     setCurrentGroup,
+    toggleGroup,
+    isGroupSelected,
     resetCurrentTabGroup,
     setSearchKeyword,
     clearSearchKeyword,

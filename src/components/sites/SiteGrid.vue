@@ -42,13 +42,14 @@ function matchSearch(site: Site, keyword: string): boolean {
   return false
 }
 
-// 筛选后的站点列表（用于单个分组模式）
+// 筛选后的站点列表（用于多选分组模式）
 const filteredSites = computed(() => {
   let sites = navStore.allSites
   
-  // 按分组筛选
-  if (configStore.currentGroup !== 'all') {
-    sites = sites.filter((s: Site) => s.groupKey === configStore.currentGroup)
+  // 按分组筛选（支持多选）
+  const selectedGroups = configStore.currentGroupArray
+  if (selectedGroups.length > 0) {
+    sites = sites.filter((s: Site) => s.groupKey && selectedGroups.includes(s.groupKey))
   }
   
   // 按搜索关键字筛选
@@ -60,13 +61,19 @@ const filteredSites = computed(() => {
   return sites
 })
 
-// 按分组组织的站点（用于全部模式）
+// 按分组组织的站点（用于全部模式或多选分组模式）
 const groupedSites = computed(() => {
   const result: { group: Group; sites: Site[] }[] = []
   const allSites = navStore.allSites
   const kw = searchKeyword.value
+  const selectedGroups = configStore.currentGroupArray
   
-  for (const group of navStore.siteGroups) {
+  // 确定要显示的分组
+  const groupsToShow = selectedGroups.length > 0
+    ? navStore.siteGroups.filter((g: Group) => selectedGroups.includes(g.key))
+    : navStore.siteGroups
+  
+  for (const group of groupsToShow) {
     let sites = allSites.filter((s: Site) => s.groupKey === group.key)
     // 按搜索关键字筛选
     if (kw) {
@@ -145,14 +152,15 @@ function getGroupIconClass(icon?: string): string {
           :current="configStore.currentGroup"
           color="cyan"
           @change="configStore.setCurrentGroup"
+          @toggle="configStore.toggleGroup"
         />
         <NetworkModeDropdown />
         <LayoutSwitcher />
       </div>
     </div>
 
-    <!-- 全部模式：按分组显示 -->
-    <template v-if="configStore.currentGroup === 'all'">
+    <!-- 全部模式或多选分组模式：按分组显示 -->
+    <template v-if="configStore.isAllSelected || configStore.currentGroupArray.length > 1">
       <div 
         v-for="(item, index) in groupedSites" 
         :key="item.group.key" 
@@ -185,7 +193,7 @@ function getGroupIconClass(icon?: string): string {
       </div>
     </template>
 
-    <!-- 单个分组模式 -->
+    <!-- 单个分组模式（只选了一个分组） -->
     <template v-else>
       <!-- 站点网格 -->
       <div :class="gridClass">
