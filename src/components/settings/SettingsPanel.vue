@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useConfigStore, PRESET_BACKGROUNDS } from '@/stores/config'
-import { X, Sun, Moon, Monitor, RotateCcw, Palette, Eye, Check, Image, Github } from 'lucide-vue-next'
+import { X, Sun, Moon, RotateCcw, Palette, Eye, Check, Image, Github } from 'lucide-vue-next'
 import type { ThemeMode } from '@/types'
 
 const configStore = useConfigStore()
@@ -18,8 +18,7 @@ function close() {
 // 主题选项
 const themeOptions: { value: ThemeMode; label: string; icon: typeof Sun; color: string }[] = [
   { value: 'light', label: '浅色', icon: Sun, color: 'var(--warning)' },
-  { value: 'dark', label: '深色', icon: Moon, color: 'var(--neon-purple)' },
-  { value: 'auto', label: '跟随系统', icon: Monitor, color: 'var(--neon-cyan)' }
+  { value: 'dark', label: '深色', icon: Moon, color: 'var(--neon-purple)' }
 ]
 
 </script>
@@ -380,7 +379,7 @@ const themeOptions: { value: ThemeMode; label: string; icon: typeof Sun; color: 
 /* 主题网格 */
 .theme-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 0.5rem;
 }
 

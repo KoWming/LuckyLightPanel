@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useConfigStore } from '@/stores/config'
 import { useNavStore } from '@/stores/nav'
-import { Settings, Moon, Sun, Monitor, Clock, Zap } from 'lucide-vue-next'
+import { Settings, Moon, Sun, Clock, Zap } from 'lucide-vue-next'
 
 const configStore = useConfigStore()
 const navStore = useNavStore()
@@ -51,7 +51,7 @@ const logoUrl = computed(() => {
 })
 
 function cycleTheme() {
-  const themes = ['light', 'dark', 'auto'] as const
+  const themes = ['light', 'dark'] as const
   const currentIndex = themes.indexOf(configStore.theme)
   const nextIndex = (currentIndex + 1) % themes.length
   configStore.setTheme(themes[nextIndex])
@@ -129,7 +129,7 @@ function openSettings() {
         <!-- 分隔线 -->
         <div v-if="configStore.showTime" class="actions-divider" />
         <!-- 主题按钮 -->
-        <button class="action-btn" @click="cycleTheme" :title="`主题: ${configStore.theme === 'auto' ? '自动' : configStore.theme === 'dark' ? '深色' : '浅色'}`">
+        <button class="action-btn" @click="cycleTheme" :title="`主题: ${configStore.theme === 'dark' ? '深色' : '浅色'}`">
           <div class="btn-inner">
             <Transition
               mode="out-in"
@@ -138,9 +138,8 @@ function openSettings() {
               leave-active-class="icon-leave"
               leave-to-class="icon-leave-to"
             >
-              <Sun v-if="effectiveTheme === 'light' && configStore.theme !== 'auto'" class="btn-icon" />
-              <Moon v-else-if="effectiveTheme === 'dark' && configStore.theme !== 'auto'" class="btn-icon" />
-              <Monitor v-else class="btn-icon" />
+              <Sun v-if="effectiveTheme === 'light'" class="btn-icon" />
+              <Moon v-else class="btn-icon" />
             </Transition>
           </div>
         </button>

@@ -63,7 +63,6 @@ export const useConfigStore = defineStore('config', () => {
   // 状态
   const config = ref<UserConfig>({ ...DEFAULT_CONFIG })
   const settingsPanelOpen = ref(false)
-  const systemDarkMode = ref(false)
   // 搜索关键字（不持久化）
   const searchKeywords = ref<TabSearchKeywords>({ ...DEFAULT_SEARCH_KEYWORDS })
   // 服务器背景图片列表
@@ -72,12 +71,7 @@ export const useConfigStore = defineStore('config', () => {
   const hasStoredConfig = ref(false)
 
   // 计算属性：实际生效的主题
-  const effectiveTheme = computed(() => {
-    if (config.value.theme === 'auto') {
-      return systemDarkMode.value ? 'dark' : 'light'
-    }
-    return config.value.theme
-  })
+  const effectiveTheme = computed(() => config.value.theme)
 
   // 计算属性：所有可用背景（预设 + 服务器）
   const allBackgrounds = computed(() => {
@@ -172,12 +166,11 @@ export const useConfigStore = defineStore('config', () => {
       hasStoredConfig.value = false
     }
 
-    // 监听系统主题变化
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    systemDarkMode.value = mediaQuery.matches
-    mediaQuery.addEventListener('change', (e) => {
-      systemDarkMode.value = e.matches
-    })
+    // 验证主题有效性（移除了 auto 主题支持）
+    if (config.value.theme !== 'light' && config.value.theme !== 'dark') {
+      config.value.theme = 'dark'
+      saveConfig()
+    }
   }
 
   // 设置服务器背景图片
@@ -366,7 +359,6 @@ export const useConfigStore = defineStore('config', () => {
     // 状态
     config,
     settingsPanelOpen,
-    systemDarkMode,
     searchKeywords,
     serverBackgrounds,
 

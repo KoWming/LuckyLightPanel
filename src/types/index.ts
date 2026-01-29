@@ -169,7 +169,7 @@ export interface NetworkTypeResponse {
 // ============ 用户配置类型 ============
 
 /** 主题模式 */
-export type ThemeMode = 'auto' | 'light' | 'dark'
+export type ThemeMode = 'light' | 'dark'
 
 /** 布局模式 */
 export type LayoutMode = 'compact' | 'normal' | 'large' | 'list' | 'minimal'
