@@ -199,9 +199,15 @@ export const useNavStore = defineStore('nav', () => {
       }
       const data = await response.json()
       if (data.ret === 0) {
-        serverConfig.value = data.config || {}
+        const config = data.config
+        // 检查配置是否有效（存在、非空对象、内容长度足够）
+        if (!config || typeof config !== 'object' || Object.keys(config).length === 0 || JSON.stringify(config).length < 20) {
+          console.log('Server config is empty or invalid, using defaults')
+          return null
+        }
+        serverConfig.value = config
         console.log('Server config loaded:', serverConfig.value)
-        return data.config
+        return config
       } else {
         console.log('Server config returned error (ret=%d), using defaults', data.ret)
       }
