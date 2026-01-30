@@ -160,10 +160,7 @@ const gridClass = computed(() => {
         :class="{ 'has-margin': index < groupedSites.length - 1 }"
       >
         <!-- 分组标题 -->
-        <h3 class="group-title">
-          <span>{{ item.group.name }}</span>
-          <span class="group-count">({{ item.sites.length }})</span>
-        </h3>
+        <h3 class="group-title">{{ item.group.name }}</h3>
         <!-- 站点网格 -->
         <div :class="gridClass">
           <SiteCard
@@ -240,15 +237,6 @@ const gridClass = computed(() => {
   font-size: 1.125rem;
   font-weight: 600;
   color: hsl(var(--text-secondary));
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.group-count {
-  font-size: 0.875rem;
-  color: hsl(var(--text-muted));
-  font-weight: 400;
 }
 
 /* 网格布局 */

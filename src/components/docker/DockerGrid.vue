@@ -263,10 +263,7 @@ onMounted(() => {
         :class="{ 'has-margin': index < groupedContainers.length - 1 }"
       >
         <!-- 分组标题 -->
-        <h3 class="group-title">
-          <span>{{ item.group.name }}</span>
-          <span class="group-count">({{ item.containers.length }})</span>
-        </h3>
+        <h3 class="group-title">{{ item.group.name }}</h3>
         <!-- 容器网格 -->
         <div :class="gridClass">
           <DockerCard
@@ -345,15 +342,6 @@ onMounted(() => {
   font-size: 1.125rem;
   font-weight: 600;
   color: hsl(var(--text-secondary));
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.group-count {
-  font-size: 0.875rem;
-  color: hsl(var(--text-muted));
-  font-weight: 400;
 }
 
 /* ============ Docker 网格布局 ============ */
