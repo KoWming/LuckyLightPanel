@@ -82,23 +82,33 @@ onUnmounted(() => {
   border-radius: 1rem;
   overflow: hidden;
   cursor: pointer;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   padding: 0;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  transition: all 200ms ease;
+}
+
+.back-to-top-btn:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  transform: translateY(-2px);
 }
 
 .btn-bg {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom right, 
-    hsl(var(--neon-blue)),
-    hsl(var(--neon-purple))
-  );
-  opacity: 0.9;
-  transition: opacity 200ms;
+  background: rgba(30, 30, 50, 0.4);
+  transition: background 200ms;
 }
 
 .back-to-top-btn:hover .btn-bg {
-  opacity: 1;
+  background: rgba(30, 30, 50, 0.55);
 }
 
 .progress-ring {
@@ -129,19 +139,24 @@ onUnmounted(() => {
 }
 
 .back-to-top-btn:hover .icon {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
 }
 
 .btn-glow {
   position: absolute;
   inset: 0;
-  background: rgba(255, 255, 255, 0.2);
-  opacity: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  opacity: 1;
   transition: opacity 200ms;
 }
 
 .back-to-top-btn:hover .btn-glow {
-  opacity: 1;
+  opacity: 0.5;
 }
 
 /* 过渡动画 */
