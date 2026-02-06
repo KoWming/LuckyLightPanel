@@ -234,6 +234,13 @@ onMounted(async () => {
   }
 }
 
+/* 移动端 ContentTabs 间距调整 */
+@media (max-width: 480px) {
+  .main-content .mb-16 {
+    margin-bottom: 0.75rem;
+  }
+}
+
 /* 浮动设置按钮 */
 .floating-settings-btn {
   position: fixed;

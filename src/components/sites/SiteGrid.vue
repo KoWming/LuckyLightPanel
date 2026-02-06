@@ -230,10 +230,18 @@ const gridClass = computed(() => {
 
 @media (max-width: 480px) {
   .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
     gap: 0.5rem;
   }
   
+  .filter-bar :deep(.search-box) {
+    max-width: none;
+    width: 100%;
+  }
+  
   .filter-bar-right {
+    justify-content: space-evenly;
     gap: 0.5rem;
   }
 }
@@ -246,6 +254,16 @@ const gridClass = computed(() => {
 
 .group-section.has-margin {
   margin-bottom: 1rem;
+}
+
+@media (max-width: 480px) {
+  .group-section {
+    gap: 0.5rem;
+  }
+  
+  .group-section.has-margin {
+    margin-bottom: 0.5rem;
+  }
 }
 
 .group-title {
