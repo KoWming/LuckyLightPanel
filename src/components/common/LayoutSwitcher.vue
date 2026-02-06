@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue'
 import { useConfigStore } from '@/stores/config'
 import type { LayoutMode } from '@/types'
 
@@ -7,6 +7,8 @@ const configStore = useConfigStore()
 
 const isOpen = ref(false)
 const dropdownRef = ref<HTMLElement | null>(null)
+const dropdownMenuRef = ref<HTMLElement | null>(null)
+const alignRight = ref(false)
 
 // 布局选项配置 - 四种布局
 const layoutOptions: { value: LayoutMode; label: string; icon: string; desc: string }[] = [
@@ -25,9 +27,31 @@ const displayLabel = computed(() => {
   return option?.label || '卡片'
 })
 
+// 检测下拉菜单是否超出右边界
+function checkDropdownPosition() {
+  nextTick(() => {
+    if (dropdownMenuRef.value && dropdownRef.value) {
+      const dropdown = dropdownMenuRef.value
+      const wrapper = dropdownRef.value
+      const wrapperRect = wrapper.getBoundingClientRect()
+      const dropdownWidth = dropdown.offsetWidth
+      const viewportWidth = window.innerWidth
+      
+      // 计算居中时下拉菜单右边界位置
+      const centerRight = wrapperRect.left + (wrapperRect.width / 2) + (dropdownWidth / 2)
+      
+      // 如果超出视口右边界，则右对齐
+      alignRight.value = centerRight > viewportWidth - 16
+    }
+  })
+}
+
 // 切换下拉菜单
 function toggleDropdown() {
   isOpen.value = !isOpen.value
+  if (isOpen.value) {
+    checkDropdownPosition()
+  }
 }
 
 // 选择布局
@@ -65,7 +89,7 @@ onUnmounted(() => {
     </button>
     
     <!-- 四宫格下拉菜单 -->
-    <div class="layout-dropdown">
+    <div ref="dropdownMenuRef" class="layout-dropdown" :class="{ 'align-right': alignRight }">
       <div class="layout-grid">
         <button
           v-for="option in layoutOptions"
@@ -254,6 +278,18 @@ onUnmounted(() => {
   opacity: 1;
   visibility: visible;
   transform: translateX(-50%) scale(1);
+}
+
+/* 右对齐模式 - 当下拉菜单会超出右边界时 */
+.layout-dropdown.align-right {
+  left: auto;
+  right: 0;
+  transform: scale(0.95);
+  transform-origin: top right;
+}
+
+.layout-switcher-wrapper.open .layout-dropdown.align-right {
+  transform: scale(1);
 }
 
 /* 四宫格布局 */
