@@ -533,7 +533,12 @@ const cardClass = computed(() => {
   -webkit-backdrop-filter: blur(var(--site-card-blur)) saturate(var(--site-card-saturation));
   border: 1px solid hsl(var(--site-card-border));
   box-shadow: var(--site-card-shadow);
-  transition: all var(--duration-normal) var(--ease-out);
+  /* 弹性缓动 */
+  transition: 
+    transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 300ms ease,
+    border-color 300ms ease,
+    background 300ms ease;
 }
 
 /* 磨砂内层叠加 - 增强通透感 */
@@ -558,7 +563,11 @@ const cardClass = computed(() => {
   transform: translateY(-4px) scale(1.01);
   background: hsl(var(--site-card-bg-hover));
   border-color: hsl(var(--site-card-border-hover));
-  box-shadow: var(--site-card-shadow-hover);
+  /* 绿色系发光 */
+  box-shadow: 
+    var(--site-card-shadow-hover),
+    0 0 20px -6px hsl(var(--neon-green) / 0.3),
+    0 0 40px -10px hsl(var(--neon-cyan) / 0.12);
 }
 
 .service-card:hover::before {
@@ -664,6 +673,17 @@ const cardClass = computed(() => {
   overflow: hidden;
   filter: brightness(var(--icon-brightness, 1));
   position: relative;
+  /* 弹性缓动 */
+  transition: 
+    transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 300ms ease;
+}
+
+.service-card:hover .icon-box {
+  transform: scale(1.1) rotate(-2deg);
+  box-shadow: 
+    0 6px 20px -4px hsl(var(--neon-green) / 0.35),
+    0 0 15px -3px hsl(var(--neon-green) / 0.25);
 }
 
 .icon-box::after {
@@ -708,11 +728,12 @@ const cardClass = computed(() => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  transition: color 300ms;
+  transition: color 300ms ease, text-shadow 300ms ease;
 }
 
 .service-card:hover .card-title {
-  color: hsl(var(--neon-cyan));
+  color: hsl(var(--neon-green));
+  text-shadow: 0 0 12px hsl(var(--neon-green) / 0.4);
 }
 
 .status-row {

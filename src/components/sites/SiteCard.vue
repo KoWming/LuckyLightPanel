@@ -333,7 +333,12 @@ const iconClass = computed(() => {
   -webkit-backdrop-filter: blur(var(--site-card-blur)) saturate(var(--site-card-saturation));
   border: 1px solid hsl(var(--site-card-border));
   box-shadow: var(--site-card-shadow);
-  transition: all var(--duration-normal) var(--ease-out);
+  /* 弹性缓动 - 更有质感的悬浮 */
+  transition: 
+    transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 300ms ease,
+    border-color 300ms ease,
+    background 300ms ease;
   display: block;
   text-decoration: none;
   cursor: pointer;
@@ -375,10 +380,14 @@ const iconClass = computed(() => {
 }
 
 .cyber-card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px) scale(1.01);
   background: hsl(var(--site-card-bg-hover));
   border-color: hsl(var(--site-card-border-hover));
-  box-shadow: var(--site-card-shadow-hover);
+  /* 多层次阴影 + 外发光 */
+  box-shadow: 
+    var(--site-card-shadow-hover),
+    0 0 20px -6px hsl(var(--neon-cyan) / 0.3),
+    0 0 40px -10px hsl(var(--neon-purple) / 0.15);
 }
 
 .cyber-card:hover::before {
@@ -436,7 +445,7 @@ const iconClass = computed(() => {
   gap: 0.5rem;
 }
 
-/* 霞虹图标 */
+/* 霓虹图标 */
 .neon-icon {
   flex-shrink: 0;
   overflow: hidden;
@@ -444,7 +453,10 @@ const iconClass = computed(() => {
   align-items: center;
   justify-content: center;
   position: relative;
-  transition: all var(--duration-normal) var(--ease-spring);
+  /* 弹性缓动 - 图标跳动感 */
+  transition: 
+    transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 300ms ease;
   filter: brightness(var(--icon-brightness, 1));
   /* 使用主题适配的背景色 */
   background: hsl(var(--icon-placeholder-bg));
@@ -483,7 +495,10 @@ const iconClass = computed(() => {
 }
 
 .cyber-card:hover .neon-icon {
-  transform: scale(1.08);
+  transform: scale(1.1) rotate(-2deg);
+  box-shadow: 
+    0 6px 20px -4px hsl(var(--neon-cyan) / 0.35),
+    0 0 15px -3px hsl(var(--neon-cyan) / 0.25);
 }
 
 .icon-img {
@@ -524,12 +539,13 @@ const iconClass = computed(() => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  transition: color 300ms;
+  transition: color 300ms ease, text-shadow 300ms ease;
   line-height: 1.3;
 }
 
 .cyber-card:hover .card-title {
   color: hsl(var(--neon-cyan));
+  text-shadow: 0 0 12px hsl(var(--neon-cyan) / 0.4);
 }
 
 .title-compact,
